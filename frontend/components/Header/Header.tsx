@@ -32,7 +32,7 @@ const Header = () => {
               />
             ) : (
               <MdOutlineLightMode
-                classname="cursor-pointer"
+                className="cursor-pointer"
                 onClick={() => {
                   setDarkTheme(true);
                   localStorage.setItem("hotel-theme", "true");
