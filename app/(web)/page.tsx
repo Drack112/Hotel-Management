@@ -1,3 +1,5 @@
+import HeroSection from "@/components/HeroSection/HeroSection";
+
 export default function Home() {
-  return <h1>Hello Hotelzz</h1>;
+  return <HeroSection />;
 }
