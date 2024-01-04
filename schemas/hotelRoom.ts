@@ -64,7 +64,7 @@ const hotelRoom = {
         Rule.required().min(3).error("Minimum of 3 images required"),
     }),
     defineField({
-      name: "converImage",
+      name: "coverImage",
       title: "Cover Image",
       type: "object",
       fields: [
