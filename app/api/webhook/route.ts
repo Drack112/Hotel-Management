@@ -29,7 +29,7 @@ export async function POST(req: Request, res: Response) {
 
       const {
         // @ts-ignore
-        metada: {
+        metadata: {
           adults,
           checkInDate,
           checkOutDate,

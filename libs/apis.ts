@@ -48,13 +48,10 @@ export const createBooking = async ({
       {
         create: {
           _type: "booking",
-          user: {
-            _type: "reference",
-            _ref: user,
-          },
+          user: { _type: "reference", _ref: user },
           hotelRoom: { _type: "reference", _ref: hotelRoom },
-          checkInDate,
-          checkOutDate,
+          checkinDate: checkInDate,
+          checkoutDate: checkOutDate,
           numberOfDays,
           adults,
           children,
