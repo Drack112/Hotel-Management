@@ -11,11 +11,16 @@ import { signOut } from "next-auth/react";
 import { GiMoneyStack } from "react-icons/gi";
 import { useState } from "react";
 import { BsJournalBookmarkFill } from "react-icons/bs";
+import Table from "@/components/Table/Table";
 
 const UserDetails = (props: { params: { id: string } }) => {
   const [currentNav, setCurrentNav] = useState<
     "bookings" | "amount" | "ratings"
   >("bookings");
+  const [roomId, setRoomId] = useState<string | null>(null);
+  const [isRatingVisible, setIsRatingVisible] = useState(false);
+
+  const toogleRatingModal = () => setIsRatingVisible((prevState) => !prevState);
 
   const {
     params: { id: userId },
@@ -139,6 +144,17 @@ const UserDetails = (props: { params: { id: string } }) => {
               </li>
             </ol>
           </nav>
+          {currentNav === "bookings" ? (
+            userBookings && (
+              <Table
+                bookingDetails={userBookings}
+                setRoomId={setRoomId}
+                toggleRatingModal={toogleRatingModal}
+              />
+            )
+          ) : (
+            <></>
+          )}
         </div>
       </div>
     </div>
