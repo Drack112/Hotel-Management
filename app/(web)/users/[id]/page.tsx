@@ -1,31 +1,66 @@
 "use client";
 
-import { getUserBookings } from "@/libs/apis";
-import { User } from "@/models/User";
-import axios from "axios";
 import useSWR from "swr";
-import LoadingSpinner from "../../loading";
-import Image from "next/image";
 import { FaSignOutAlt } from "react-icons/fa";
+import Image from "next/image";
+import axios from "axios";
 import { signOut } from "next-auth/react";
-import { GiMoneyStack } from "react-icons/gi";
+
+import { getUserBookings } from "@/libs/apis";
+import LoadingSpinner from "../../loading";
 import { useState } from "react";
 import { BsJournalBookmarkFill } from "react-icons/bs";
+import { GiMoneyStack } from "react-icons/gi";
 import Table from "@/components/Table/Table";
 import Chart from "@/components/Chart/Chart";
+import RatingModal from "@/components/RatingModal/RatingModal";
+import toast from "react-hot-toast";
+import { User } from "@/models/User";
 
 const UserDetails = (props: { params: { id: string } }) => {
+  const {
+    params: { id: userId },
+  } = props;
+
   const [currentNav, setCurrentNav] = useState<
     "bookings" | "amount" | "ratings"
   >("bookings");
   const [roomId, setRoomId] = useState<string | null>(null);
   const [isRatingVisible, setIsRatingVisible] = useState(false);
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  const [ratingValue, setRatingValue] = useState<number | null>(0);
+  const [ratingText, setRatingText] = useState("");
 
-  const toogleRatingModal = () => setIsRatingVisible((prevState) => !prevState);
+  const toggleRatingModal = () => setIsRatingVisible((prevState) => !prevState);
 
-  const {
-    params: { id: userId },
-  } = props;
+  const reviewSubmitHandler = async () => {
+    if (!ratingText.trim().length || !ratingValue) {
+      return toast.error("Please provide a rating text and a rating");
+    }
+
+    if (!roomId) toast.error("Id not provided");
+
+    setIsSubmittingReview(true);
+
+    try {
+      const { data } = await axios.post("/api/users", {
+        reviewText: ratingText,
+        ratingValue,
+        roomId,
+      });
+      console.log(data);
+      toast.success("Review Submitted");
+    } catch (error) {
+      console.log(error);
+      toast.error("Review Failed");
+    } finally {
+      setRatingText("");
+      setRatingValue(null);
+      setRoomId(null);
+      setIsSubmittingReview(false);
+      setIsRatingVisible(false);
+    }
+  };
 
   const fetchUserBooking = async () => getUserBookings(userId);
   const fetchUserData = async () => {
@@ -38,8 +73,6 @@ const UserDetails = (props: { params: { id: string } }) => {
     error,
     isLoading,
   } = useSWR("/api/userbooking", fetchUserBooking);
-
-  if (error) throw new Error("Cannot fetch data");
 
   const {
     data: userData,
@@ -54,6 +87,7 @@ const UserDetails = (props: { params: { id: string } }) => {
     throw new Error("Cannot fetch data");
 
   if (loadingUserData) return <LoadingSpinner />;
+  if (!userData) throw new Error("Cannot fetch data");
   if (!userData) throw new Error("Cannot fetch data");
 
   return (
@@ -145,25 +179,37 @@ const UserDetails = (props: { params: { id: string } }) => {
               </li>
             </ol>
           </nav>
+
           {currentNav === "bookings" ? (
             userBookings && (
               <Table
                 bookingDetails={userBookings}
                 setRoomId={setRoomId}
-                toggleRatingModal={toogleRatingModal}
+                toggleRatingModal={toggleRatingModal}
               />
             )
           ) : (
             <></>
           )}
 
-          {currentNav === "bookings" ? (
+          {currentNav === "amount" ? (
             userBookings && <Chart userBookings={userBookings} />
           ) : (
             <></>
           )}
         </div>
       </div>
+
+      <RatingModal
+        isOpen={isRatingVisible}
+        ratingValue={ratingValue}
+        setRatingValue={setRatingValue}
+        ratingText={ratingText}
+        setRatingText={setRatingText}
+        isSubmittingReview={isSubmittingReview}
+        reviewSubmitHandler={reviewSubmitHandler}
+        toggleRatingModal={toggleRatingModal}
+      />
     </div>
   );
 };
