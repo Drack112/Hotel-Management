@@ -12,6 +12,7 @@ import { GiMoneyStack } from "react-icons/gi";
 import { useState } from "react";
 import { BsJournalBookmarkFill } from "react-icons/bs";
 import Table from "@/components/Table/Table";
+import Chart from "@/components/Chart/Chart";
 
 const UserDetails = (props: { params: { id: string } }) => {
   const [currentNav, setCurrentNav] = useState<
@@ -152,6 +153,12 @@ const UserDetails = (props: { params: { id: string } }) => {
                 toggleRatingModal={toogleRatingModal}
               />
             )
+          ) : (
+            <></>
+          )}
+
+          {currentNav === "bookings" ? (
+            userBookings && <Chart userBookings={userBookings} />
           ) : (
             <></>
           )}
