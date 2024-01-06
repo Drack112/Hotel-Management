@@ -16,6 +16,7 @@ import Chart from "@/components/Chart/Chart";
 import RatingModal from "@/components/RatingModal/RatingModal";
 import toast from "react-hot-toast";
 import { User } from "@/models/User";
+import BackDrop from "@/components/BackDrop/BackDrop";
 
 const UserDetails = (props: { params: { id: string } }) => {
   const {
@@ -210,6 +211,7 @@ const UserDetails = (props: { params: { id: string } }) => {
         reviewSubmitHandler={reviewSubmitHandler}
         toggleRatingModal={toggleRatingModal}
       />
+      <BackDrop isOpen={isRatingVisible} />
     </div>
   );
 };
